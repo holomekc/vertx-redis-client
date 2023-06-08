@@ -2,6 +2,14 @@ name: vertx-redis-client (4.x)
 on:
   schedule:
     - cron: '0 4 * * *'
+  workflow_dispatch:
+    inputs:
+      branch:
+        type: string
+        required: true
+        default: "4.x"
+        description: Set the branch to test
+
 jobs:
   CI:
     strategy:
@@ -13,15 +21,7 @@ jobs:
             jdk: 17
     uses: ./.github/workflows/ci.yml
     with:
-      branch: 4.x
+      branch: {{ inputs.branch }}
       jdk: ${{ matrix.jdk }}
       os: ${{ matrix.os }}
-    secrets: inherit
-  Deploy:
-    if: ${{ github.repository_owner == 'vert-x3' && (github.event_name == 'push' || github.event_name == 'schedule') }}
-    needs: CI
-    uses: ./.github/workflows/deploy.yml
-    with:
-      branch: 4.x
-      jdk: 8
     secrets: inherit
